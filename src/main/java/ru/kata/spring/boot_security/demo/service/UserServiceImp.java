@@ -1,6 +1,6 @@
 package ru.kata.spring.boot_security.demo.service;
 
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,7 +22,7 @@ public class UserServiceImp implements UserService, UserDetailsService {
     private final  UserRepository userRepository;
     private final  PasswordEncoder passwordEncoder;
 
-    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImp(UserRepository userRepository,@Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -44,26 +44,33 @@ public class UserServiceImp implements UserService, UserDetailsService {
     @Transactional
     @Override
     public void add(User user) {
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
     @Transactional
     @Override
     public void update(User user) {
-
+        if (!user.getPassword().equals(show(user.getId()).getPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        userRepository.save(user);
     }
     @Transactional
     @Override
     public void delete(Long id) {
-
+        if (userRepository.findById(id).isPresent()) {
+            userRepository.deleteById(id);
+        }
     }
     @Transactional
     @Override
     public List<User> getAllUser() {
-        return null;
+        return userRepository.findAll();
     }
     @Transactional
     @Override
     public User show(Long id) {
-        return null;
+        User user = userRepository.findById(id).get();
+        return user;
     }
 }
