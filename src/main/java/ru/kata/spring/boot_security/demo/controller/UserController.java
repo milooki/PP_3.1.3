@@ -1,4 +1,5 @@
 package ru.kata.spring.boot_security.demo.controller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,7 +19,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public String onlyForUser (Principal principal, ModelMap model) {
+    public String showUser(Principal principal, ModelMap model) {
         User user = userServiceImp.findByUsername(principal.getName());
         model.addAttribute("user", user);
         return "user";

@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.model;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -16,9 +17,11 @@ public class User {
 
 
     @Column(name = "password")
+    @NotNull
     private String password;
 
     @Column(name = "name")
+    @NotNull
     private String name;
 
     @Column(name = "last_name")
@@ -27,20 +30,15 @@ public class User {
     @Column(name = "age")
     private Long age;
 
-    @ManyToMany (fetch = FetchType.LAZY)
-    @JoinTable (name = "users_roles",
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
 
-    public Collection<Role> getRoles() {
-        return roles;
-    }
-    public void setRoles(Collection<Role> roles) {
-        this.roles = roles;
-    }
 
-    public User() {}
+    public User() {
+    }
 
     public User(String name, String lastName, Long age) {
         this.name = name;
@@ -88,14 +86,14 @@ public class User {
         this.age = age;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", age=" + age +
-                '}';
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -112,5 +110,14 @@ public class User {
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (int) (age ^ (age >>> 32));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
+                '}';
     }
 }
